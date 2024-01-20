@@ -261,19 +261,24 @@ int main(int argc, char** argv)
 {
 	std::cout << "Opening dia file..." << std::endl;
 	std::fstream file("assets.dia", std::ios::in | std::ios::binary);
+    if (!file.is_open()) {
+        file.close();
+        std::cerr << "Failed to open assets.dia file." << std::endl;
+        return 1;
+    }
 
     IdHeader idHeader;
     file.read((char*)&idHeader, sizeof(IdHeader));
 
     if (idHeader.MagicNumber != MAGIC_NUMBER) {
         file.close();
-        std::cout << "Invalid magic number" << std::endl;
+        std::cerr << "Invalid magic number" << std::endl;
         return 1;
     }
 
     if (idHeader.MinorVersion != MINOR_VERSION || idHeader.MajorVersion != MAJOR_VERSION) {
         file.close();
-        std::cout << "Invalid version" << std::endl;
+        std::cerr << "Invalid version" << std::endl;
         return 1;
     }
 
@@ -287,6 +292,13 @@ int main(int argc, char** argv)
     std::fstream ysce_file("assets.ysce", std::ios::out | std::ios::binary);
     const int objectCount = sceneHeader.ObjectCount;
     std::cout << "Object count " << objectCount << std::endl;
+
+    if (!ysce_file.is_open()) {
+        ysce_file.close();
+        file.close();
+        std::cerr << "Failed to open assets.ysce file." << std::endl;
+        return 1;
+    }
 
     CompiledHeader header;
     header.ObjectCount = objectCount;

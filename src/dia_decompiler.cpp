@@ -20,19 +20,24 @@ int main(int argc, char** argv)
 {
 	std::cout << "Opening file..." << std::endl;
 	std::fstream file("assets.dia", std::ios::in | std::ios::binary);
+	if (!file.is_open()) {
+		file.close();
+		std::cerr << "Failed to open assets.dia file." << std::endl;
+		return 1;
+	}
 
 	IdHeader idHeader;
 	file.read((char*)&idHeader, sizeof(IdHeader));
 
 	if (idHeader.MagicNumber != MAGIC_NUMBER) {
 		file.close();
-		std::cout << "Invalid magic number" << std::endl;
+		std::cerr << "Invalid magic number" << std::endl;
 		return 1;
 	}
 
 	if (idHeader.MinorVersion != MINOR_VERSION || idHeader.MajorVersion != MAJOR_VERSION) {
 		file.close();
-		std::cout << "Invalid version" << std::endl;
+		std::cerr << "Invalid version" << std::endl;
 		return 1;
 	}
 
@@ -56,6 +61,12 @@ int main(int argc, char** argv)
 
 			// open file
 			std::fstream of(fname, std::ios::out);
+			if (!of.is_open()) {
+				of.close();
+				file.close();
+				std::cerr << "Failed to open " << fname << " file." << std::endl;
+				return 1;
+			}
 			of << "# dia-decompiler exported file" << std::endl;
 			of << "# made by DDev (@ddev on Discord)" << std::endl;
 			of << "# object: " << object.Name << std::endl;

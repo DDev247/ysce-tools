@@ -17,6 +17,11 @@ int main(int argc, char** argv)
 {
 	std::cout << "Opening file..." << std::endl;
 	std::fstream file("assets.ysce", std::ios::in | std::ios::binary);
+	if (!file.is_open()) {
+		file.close();
+		std::cerr << "Failed to open assets.ysce file." << std::endl;
+		return 1;
+	}
 
 	CompiledHeader fileHeader;
 	file.read((char*)&fileHeader, sizeof(CompiledHeader));
@@ -49,6 +54,12 @@ int main(int argc, char** argv)
 
 			// open file
 			std::fstream of(fname, std::ios::out);
+			if (!of.is_open()) {
+				of.close();
+				file.close();
+				std::cerr << "Failed to open " << fname << " file." << std::endl;
+				return 1;
+			}
 			of << "# ysce-decompiler exported file" << std::endl;
 			of << "# made by DDev (@ddev on Discord)" << std::endl;
 			of << "# object: " << header.ObjectName << std::endl;
