@@ -1,0 +1,18 @@
+
+# vs files
+.vs/
+
+# output directory (vs)
+out/
+
+# my directories
+ses-beta/
+ses-old/
+es2d/
+
+# model files
+*.obj
+
+# blender files
+*.blend
+*.blend1
